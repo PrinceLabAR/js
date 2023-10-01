@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Button Counter</title>
+</head>
+<body align="center">
+    <h1>Button Counter</h1>
+    
+    <p>Current Number of Customers: <span id="counter">0</span></p>
+    
+    <button onclick="displayCurrentNumber()">Current Number</button>
+    <button onclick="addOne()">Add 1</button>
+    <button onclick="addTwo()">Add 2</button>
+    <button onclick="minusOne()">Minus 1</button>
+    <button onclick="resetCounter()">Reset</button>
+    
+    <script>
+        let cvalue = 0;
+        const counterElement = document.getElementById("counter");
+        
+        function displayCurrentNumber() {
+            counterElement.textContent = cvalue;
+        }
+        
+        function addOne() {
+            cvalue += 1;
+            counterElement.textContent = cvalue;
+        }
+        
+        function addTwo() {
+            cvalue += 2;
+            counterElement.textContent = cvalue;
+        }
+        
+        function minusOne() {
+            cvalue -= 1;
+            counterElement.textContent = cvalue;
+        }
+        
+        function resetCounter() {
+            cvalue = 0;
+            counterElement.textContent = cvalue;
+        }
+    </script>
+</body>
+</html>

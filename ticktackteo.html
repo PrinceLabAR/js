@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic-Tac-Toe Game</title>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            text-align: center;
+            font-size: 24px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body align="center">
+    <h1>Tic-Tac-Toe Game</h1>
+    <div class="board">
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+        <div class="cell" onclick="makeMove(this)"></div>
+    </div>
+    <p id="winner"></p>
+
+    <script>
+        let currentPlayer = 'X';
+        let gameBoard = ['', '', '', '', '', '', '', '', ''];
+        const winningCombos = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6] // Diagonals
+        ];
+
+        function makeMove(cell) {
+            const cellIndex = Array.from(document.querySelectorAll('.cell')).indexOf(cell);
+
+            if (!gameBoard[cellIndex]) {
+                cell.textContent = currentPlayer;
+                gameBoard[cellIndex] = currentPlayer;
+
+                if (checkWin(currentPlayer)) {
+                    document.getElementById('winner').textContent = `Player ${currentPlayer} wins!`;
+                    disableBoard();
+                } else if (gameBoard.every(cell => cell !== '')) {
+                    document.getElementById('winner').textContent = "It's a tie!";
+                    disableBoard();
+                } else {
+                    currentPlayer = (currentPlayer === 'X') ? 'O' : 'X';
+                    if (currentPlayer === 'O') {
+                        setTimeout(makeAIMove, 500);
+                    }
+                }
+            }
+        }
+
+        function makeAIMove() {
+            const emptyCells = gameBoard.reduce((acc, cell, index) => {
+                if (cell === '') {
+                    acc.push(index);
+                }
+                return acc;
+            }, []);
+
+            const randomIndex = Math.floor(Math.random() * emptyCells.length);
+            const aiMoveIndex = emptyCells[randomIndex];
+
+            makeMove(document.querySelectorAll('.cell')[aiMoveIndex]);
+        }
+
+        function checkWin(player) {
+            for (const combo of winningCombos) {
+                const [a, b, c] = combo;
+                if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c] && gameBoard[a] === player) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function disableBoard() {
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.onclick = null;
+            });
+        }
+    </script>
+</body>
+</html>

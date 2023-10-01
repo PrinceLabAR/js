@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chess Game</title>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            gap: 0;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .white {
+            background-color: #f0d9b5;
+        }
+        .black {
+            background-color: #b58863;
+            color: white;
+        }
+    </style>
+</head>
+<body align="center">
+    <h1>Chess Game</h1>
+    <div class="board">
+        <!-- 8x8 cells representing the chessboard -->
+    </div>
+    
+    <script>
+        const board = document.querySelector('.board');
+        let currentPlayer = 'white'; // 'white' or 'black'
+
+        function createCell(color) {
+            const cell = document.createElement('div');
+            cell.className = `cell ${color}`;
+            cell.addEventListener('click', () => cellClicked(cell));
+            return cell;
+        }
+
+        function initializeBoard() {
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const color = (row + col) % 2 === 0 ? 'white' : 'black';
+                    const cell = createCell(color);
+                    board.appendChild(cell);
+                }
+            }
+        }
+
+        function cellClicked(cell) {
+            if (cell.textContent === '') {
+                cell.textContent = currentPlayer === 'white' ? '♕' : '♛';
+                currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+                makeAIMove();
+            }
+        }
+
+        function makeAIMove() {
+            const emptyCells = Array.from(document.querySelectorAll('.cell')).filter(cell => cell.textContent === '');
+            if (emptyCells.length > 0) {
+                const randomIndex = Math.floor(Math.random() * emptyCells.length);
+                const aiMove = emptyCells[randomIndex];
+                aiMove.textContent = currentPlayer === 'white' ? '♕' : '♛';
+                currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+            }
+        }
+
+        initializeBoard();
+    </script>
+</body>
+</html>

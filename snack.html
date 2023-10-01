@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nokia Snake Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: black;
+        }
+        #game-board {
+            border: 1px solid #ccc;
+        }
+        .cell {
+            width: 20px;
+            height: 20px;
+            background-color: black;
+            border: 1px solid #333;
+        }
+        .cell.snake {
+            background-color: lime;
+        }
+        .cell.food {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-board"></div>
+
+    <script>
+        const numRows = 20;
+        const numCols = 20;
+        const cellSize = 20;
+        let snake = [{ row: 10, col: 10 }];
+        let food = { row: 15, col: 15 };
+        let direction = 'right';
+        let gameInterval;
+
+        function createCell(row, col) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.style.width = cell.style.height = `${cellSize}px`;
+            return cell;
+        }
+
+        function renderBoard() {
+            const gameBoard = document.getElementById('game-board');
+            gameBoard.style.gridTemplateColumns = `repeat(${numCols}, ${cellSize}px)`;
+            gameBoard.innerHTML = '';
+
+            for (let row = 0; row < numRows; row++) {
+                for (let col = 0; col < numCols; col++) {
+                    const cell = createCell(row, col);
+                    gameBoard.appendChild(cell);
+                }
+            }
+        }
+
+        function updateSnake() {
+            let newHead = { ...snake[0] };
+            switch (direction) {
+                case 'up':
+                    newHead.row--;
+                    break;
+                case 'down':
+                    newHead.row++;
+                    break;
+                case 'left':
+                    newHead.col--;
+                    break;
+                case 'right':
+                    newHead.col++;
+                    break;
+            }
+
+            snake.unshift(newHead);
+
+            if (newHead.row === food.row && newHead.col === food.col) {
+                generateFood();
+            } else {
+                snake.pop();
+            }
+
+            if (isCollision(newHead) || isOutOfBounds(newHead)) {
+                clearInterval(gameInterval);
+                alert('Game over! Your score: ' + (snake.length - 1));
+            }
+
+            renderSnake();
+        }
+
+        function generateFood() {
+            food = {
+                row: Math.floor(Math.random() * numRows),
+                col: Math.floor(Math.random() * numCols)
+            };
+            renderFood();
+        }
+
+        function renderSnake() {
+            const gameBoard = document.getElementById('game-board');
+            const cells = gameBoard.getElementsByClassName('cell');
+            
+            for (const cell of cells) {
+                cell.classList.remove('snake');
+            }
+
+            for (const { row, col } of snake) {
+                const index = row * numCols + col;
+                cells[index].classList.add('snake');
+            }
+        }
+
+        function renderFood() {
+            const gameBoard = document.getElementById('game-board');
+            const cells = gameBoard.getElementsByClassName('cell');
+            const index = food.row * numCols + food.col;
+            cells[index].classList.add('food');
+        }
+
+        function isCollision(head) {
+            for (const segment of snake.slice(1)) {
+                if (segment.row === head.row && segment.col === head.col) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function isOutOfBounds(head) {
+            return head.row < 0 || head.row >= numRows || head.col < 0 || head.col >= numCols;
+        }
+
+        function handleKeyPress(event) {
+            const key = event.key;
+            if (key === 'ArrowUp' && direction !== 'down') {
+                direction = 'up';
+            } else if (key === 'ArrowDown' && direction !== 'up') {
+                direction = 'down';
+            } else if (key === 'ArrowLeft' && direction !== 'right') {
+                direction = 'left';
+            } else if (key === 'ArrowRight' && direction !== 'left') {
+                direction = 'right';
+            }
+        }
+
+        renderBoard();
+        generateFood();
+        renderSnake();
+
+        window.addEventListener('keydown', handleKeyPress);
+
+        gameInterval = setInterval(updateSnake, 200);
+    </script>
+</body>
+</html>
